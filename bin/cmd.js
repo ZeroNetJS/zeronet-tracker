@@ -20,12 +20,14 @@ var argv = minimist(process.argv.slice(2), {
     'udp',
     'version',
     'ws',
-    'stats'
+    'stats',
+    'zero'
   ],
   string: [
     'http-hostname',
     'udp-hostname',
-    'udp6-hostname'
+    'udp6-hostname',
+    'zero-hostname'
   ],
   default: {
     port: 8000,
@@ -58,6 +60,7 @@ if (argv.help) {
         --http                    enable http server
         --udp                     enable udp server
         --ws                      enable websocket server
+        --zero                    enable zero server
         --stats                   enable web-based statistics (default: true)
     -q, --quiet                   only show error output
     -s, --silent                  show no output
@@ -134,6 +137,9 @@ server.listen(argv.port, hostname, function () {
     var wsHost = wsAddr.address !== '::' ? wsAddr.address : 'localhost'
     var wsPort = wsAddr.port
     console.log('WebSocket tracker: ws://' + wsHost + ':' + wsPort)
+  }
+  if (server.zswarm && !argv.quiet) {
+    console.log('ZeroNet Tracker: zero://' + server.zswarm.zero.multiaddrs[0].nodeAddress().address + ':' + server.zswarm.zero.multiaddrs[0].nodeAddress().port)
   }
   if (server.http && argv.stats && !argv.quiet) {
     var statsAddr = server.http.address()

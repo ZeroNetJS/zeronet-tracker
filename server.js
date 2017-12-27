@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = Server
 
 var Buffer = require('safe-buffer').Buffer
@@ -17,6 +19,9 @@ var Swarm = require('./lib/server/swarm')
 var parseHttpRequest = require('./lib/server/parse-http')
 var parseUdpRequest = require('./lib/server/parse-udp')
 var parseWebSocketRequest = require('./lib/server/parse-websocket')
+var parseZero = require('./lib/server/parse-zero')
+const ZSwarm = require('zeronet-swarm')
+const TCP = require('libp2p-tcp')
 
 inherits(Server, EventEmitter)
 
@@ -63,6 +68,17 @@ function Server (opts) {
   self.udp4 = null
   self.udp6 = null
   self.ws = null
+  self.zswarm = null
+
+  // create a zeronet swarm and apply the tracker commands
+  if (opts.zero !== false) {
+    self.zswarm = opts.zswarm
+    if (self.zswarm) {
+      self.zswarm_custom = true
+    } else {
+      self.zswarm = true
+    }
+  }
 
   // start an http tracker unless the user explictly says no
   if (opts.http !== false) {
@@ -312,6 +328,8 @@ Server.prototype.listen = function (/* port, hostname, onlistening */) {
 
   var httpPort = isObject(port) ? (port.http || 0) : port
   var udpPort = isObject(port) ? (port.udp || 0) : port
+  var zeroPort = isObject(port) ? (port.zero || 0) : port
+  if (zeroPort === httpPort) zeroPort++
 
   // binding to :: only receives IPv4 connections if the bindv6only sysctl is set 0,
   // which is the default on many operating systems
@@ -322,6 +340,23 @@ Server.prototype.listen = function (/* port, hostname, onlistening */) {
   if (self.http) self.http.listen(httpPort, httpHostname)
   if (self.udp4) self.udp4.bind(udpPort, udp4Hostname)
   if (self.udp6) self.udp6.bind(udpPort, udp6Hostname)
+  if (self.zswarm && !self.zswarm_custom) {
+    let zn = common.fakeZeroNet()
+    self.zswarm = new ZSwarm({
+      zero: {
+        listen: [
+          '/ip4/0.0.0.0/tcp/' + zeroPort
+        ],
+        transports: [
+          new TCP()
+        ]
+      },
+      libp2p: false
+    }, zn)
+    self.zswarm.start(() => {})
+    zn.swarm = self.zswarm
+  }
+  if (self.zswarm) parseZero(self.zswarm, self)
 }
 
 Server.prototype.close = function (cb) {
