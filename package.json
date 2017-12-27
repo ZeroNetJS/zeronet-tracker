@@ -1,7 +1,7 @@
 {
   "name": "zeronet-tracker",
   "description": "Simple, robust, ZeroNet tracker (client & server) implementation",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "author": {
     "name": "Maciej Krüger",
     "email": "mkg20001@gmail.com",
