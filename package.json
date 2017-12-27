@@ -1,14 +1,14 @@
 {
-  "name": "bittorrent-tracker",
-  "description": "Simple, robust, BitTorrent tracker (client & server) implementation",
-  "version": "9.2.4",
+  "name": "zeronet-tracker",
+  "description": "Simple, robust, ZeroNet tracker (client & server) implementation",
+  "version": "0.0.0",
   "author": {
-    "name": "WebTorrent, LLC",
-    "email": "feross@webtorrent.io",
-    "url": "https://webtorrent.io"
+    "name": "Maciej Krüger",
+    "email": "mkg20001@gmail.com",
+    "url": "https://mkg20001.github.io"
   },
   "bin": {
-    "bittorrent-tracker": "./bin/cmd.js"
+    "zeronet-tracker": "./bin/cmd.js"
   },
   "browser": {
     "./lib/common-node.js": false,
@@ -17,7 +17,7 @@
     "./server.js": false
   },
   "bugs": {
-    "url": "https://github.com/webtorrent/bittorrent-tracker/issues"
+    "url": "https://github.com/ZeroNetJS/zeronet-tracker/issues"
   },
   "dependencies": {
     "bencode": "^1.0.0",
@@ -60,15 +60,14 @@
     "peer",
     "peer-to-peer",
     "stream",
-    "torrent",
     "tracker",
-    "wire"
+    "zeronet"
   ],
   "license": "MIT",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/webtorrent/bittorrent-tracker.git"
+    "url": "git://github.com/ZeroNetJS/zeronet-tracker.git"
   },
   "scripts": {
     "update-authors": "./bin/update-authors.sh",

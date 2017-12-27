@@ -1,28 +1,28 @@
-# bittorrent-tracker [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url] [![Greenkeeper badge][greenkeeper-image]][greenkeeper-url]
+# zeronet-tracker [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url] [![Greenkeeper badge][greenkeeper-image]][greenkeeper-url]
 
-[travis-image]: https://img.shields.io/travis/webtorrent/bittorrent-tracker/master.svg
-[travis-url]: https://travis-ci.org/webtorrent/bittorrent-tracker
-[npm-image]: https://img.shields.io/npm/v/bittorrent-tracker.svg
-[npm-url]: https://npmjs.org/package/bittorrent-tracker
-[downloads-image]: https://img.shields.io/npm/dm/bittorrent-tracker.svg
-[downloads-url]: https://npmjs.org/package/bittorrent-tracker
+[travis-image]: https://img.shields.io/travis/ZeroNetJS/zeronet-tracker/master.svg
+[travis-url]: https://travis-ci.org/ZeroNetJS/zeronet-tracker
+[npm-image]: https://img.shields.io/npm/v/zeronet-tracker.svg
+[npm-url]: https://npmjs.org/package/zeronet-tracker
+[downloads-image]: https://img.shields.io/npm/dm/zeronet-tracker.svg
+[downloads-url]: https://npmjs.org/package/zeronet-tracker
 [standard-image]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
 [standard-url]: https://standardjs.com
-[greenkeeper-image]: https://badges.greenkeeper.io/webtorrent/bittorrent-tracker.svg
+[greenkeeper-image]: https://badges.greenkeeper.io/zeronetjs/zeronet-tracker.svg
 [greenkeeper-url]: https://greenkeeper.io/
 
-#### Simple, robust, BitTorrent tracker (client & server) implementation
+#### Simple, robust, ZeroNet tracker (client & server) implementation
 
-![tracker](https://raw.githubusercontent.com/webtorrent/bittorrent-tracker/master/img.png)
+![tracker](https://raw.githubusercontent.com/ZeroNetJS/zeronet-tracker/master/img.png)
 
-Node.js implementation of a [BitTorrent tracker](https://wiki.theory.org/BitTorrentSpecification#Tracker_HTTP.2FHTTPS_Protocol), client and server.
+Node.js implementation of a ZeroNet Tracker (which is a [BitTorrent tracker](https://wiki.theory.org/BitTorrentSpecification#Tracker_HTTP.2FHTTPS_Protocol) that has support for the [ZeroProtocol](https://zeronet.readthedocs.io/en/latest/help_zeronet/network_protocol/) and .onion addresses)
 
-A **BitTorrent tracker** is a web service which responds to requests from BitTorrent
+A **ZeroNet tracker** is a web service which responds to requests from ZeroNet
 clients. The requests include metrics from clients that help the tracker keep overall
 statistics about the torrent. The response includes a peer list that helps the client
 participate in the torrent swarm.
 
-This module is used by [WebTorrent](http://webtorrent.io).
+This module is used by [ZeroNetJS](https://zeronetjs.github.io).
 
 ## features
 
@@ -31,14 +31,14 @@ This module is used by [WebTorrent](http://webtorrent.io).
   - HTTP trackers
   - UDP trackers ([BEP 15](http://www.bittorrent.org/beps/bep_0015.html))
   - WebTorrent trackers ([BEP forthcoming](http://webtorrent.io))
-- Supports ipv4 & ipv6
+  - Zero trackers ([No spec, just code](https://github.com/HelloZeroNet/ZeroNet/blob/master/plugins/disabled-Bootstrapper/BootstrapperPlugin.py))
+- Supports ipv4 & ipv6 & onion
 - Supports tracker "scrape" extension
 - Robust and well-tested
   - Comprehensive test suite (runs entirely offline, so it's reliable)
-  - Used by popular clients: [WebTorrent](http://webtorrent.io), [peerflix](https://www.npmjs.com/package/peerflix), and [playback](https://mafintosh.github.io/playback/)
 - Tracker statistics available via web interface at `/stats` or JSON data at `/stats.json`
 
-Also see [bittorrent-dht](https://www.npmjs.com/package/bittorrent-dht).
+Also see [zeronet-swarm](https://www.npmjs.com/package/zeronet-swarm).
 
 ### Tracker stats
 
@@ -47,7 +47,7 @@ Also see [bittorrent-dht](https://www.npmjs.com/package/bittorrent-dht).
 ## install
 
 ```
-npm install bittorrent-tracker
+npm install zeronet-tracker
 ```
 
 ## usage
@@ -57,12 +57,13 @@ npm install bittorrent-tracker
 To connect to a tracker, just do this:
 
 ```js
-var Client = require('bittorrent-tracker')
+var Client = require('zeronet-tracker')
 
 var requiredOpts = {
   infoHash: new Buffer('012345678901234567890'), // hex string or Buffer
   peerId: new Buffer('01234567890123456789'), // hex string or Buffer
   announce: [], // list of tracker server urls
+  // zswarm: swarm optional zeronet swarm (will be created if empty)
   port: 6881 // torrent client port, (in browser, optional)
 }
 
@@ -146,7 +147,7 @@ client.on('scrape', function (data) {
 To start a BitTorrent tracker server to track swarms of peers:
 
 ```js
-var Server = require('bittorrent-tracker').Server
+var Server = require('zeronet-tracker').Server
 
 var server = new Server({
   udp: true, // enable udp server? [default=true]
@@ -230,7 +231,7 @@ The http server will handle requests for the following paths: `/announce`, `/scr
 Scraping multiple torrent info is possible with a static `Client.scrape` method:
 
 ```js
-var Client = require('bittorrent-tracker')
+var Client = require('zeronet-tracker')
 Client.scrape({ announce: announceUrl, infoHash: [ infoHash1, infoHash2 ]}, function (err, results) {
   results[infoHash1].announce
   results[infoHash1].infoHash
@@ -244,16 +245,16 @@ Client.scrape({ announce: announceUrl, infoHash: [ infoHash1, infoHash2 ]}, func
 
 ## command line
 
-Install `bittorrent-tracker` globally:
+Install `zeronet-tracker` globally:
 
 ```sh
-$ npm install -g bittorrent-tracker
+$ npm install -g zeronet-tracker
 ```
 
 Easily start a tracker server:
 
 ```sh
-$ bittorrent-tracker
+$ zeronet-tracker
 http server listening on 8000
 udp server listening on 8000
 ws server listening on 8000
@@ -262,11 +263,11 @@ ws server listening on 8000
 Lots of options:
 
 ```sh
-$ bittorrent-tracker --help
-  bittorrent-tracker - Start a bittorrent tracker server
+$ zeronet-tracker --help
+  zeronet-tracker - Start a bittorrent tracker server
 
   Usage:
-    bittorrent-tracker [OPTIONS]
+    zeronet-tracker [OPTIONS]
 
   If no --http, --udp, or --ws option is supplied, all tracker types will be started.
 
@@ -284,4 +285,4 @@ $ bittorrent-tracker --help
 
 ## license
 
-MIT. Copyright (c) [Feross Aboukhadijeh](https://feross.org) and [WebTorrent, LLC](https://webtorrent.io).
+MIT. Copyright (c) [Feross Aboukhadijeh](https://feross.org), [WebTorrent, LLC](https://webtorrent.io) and [Maciej Krüger](https://mkg20001.github.io).
